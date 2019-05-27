@@ -44,12 +44,12 @@ def interpolate_Bspline(stepsBtwFrame, currentPos, nextPos, liftHeight, draw=Fal
 
     nurbs.evaluate()  # need to put start and stop points
 
-    pts = nurbs._curve_points#[1:(stepsBtwFrame+1)]
+    pts = nurbs.evalpts#[1:(stepsBtwFrame+1)]
 
     if draw == True:
         ##################### For climbing between 2 walls #####################
-        plt.plot([nurbs._curve_points[i][0] for i in range(nurbs.sample_size)],
-                 [nurbs._curve_points[i][1] for i in range(nurbs.sample_size)])
+        plt.plot([nurbs.evalpts[i][0] for i in range(nurbs.sample_size)],
+                 [nurbs.evalpts[i][1] for i in range(nurbs.sample_size)])
         plt.xlabel("x")
         plt.ylabel("z")
         #plt.xlim([-200, 10])
