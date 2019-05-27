@@ -16,7 +16,7 @@ void loop() {
   FORCE = FORCE1/1000*9.8;
   Serial.println("FORCE=");
   Serial.println(FORCE);
-  delay (500);
+  //delay (500);
   // put your main code here, to run repeatedly:
 
 }
