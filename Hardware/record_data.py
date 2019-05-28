@@ -3,21 +3,33 @@ from multiprocessing import Process, Queue
 import Hardware.measure_pos as measure_pos
 import Hardware.read_serial_data as read_serial_data
 import Util.interpolation as interp
-import Util.calculate_angles as ang
+import Util.make_trajectory as ang
 import time
 import csv
+import matplotlib.pyplot as plt
 
 
 csv_file_out='test_output.csv'
 if len(sys.argv)>=2:
     csv_file_out=sys.argv[1]
 
-
-pts1=interp.interpolate_Bspline(100, [0, -30], [0, 30], 60, True)
-pts2=interp.interpolate_line(100,[0, 30], [0, -30])
+start=[0,-20]
+end=[0,80]
+pts1=interp.interpolate_Bspline(100, start, end, 20,False)
+pts2=interp.interpolate_line(100,end, start)
 pts=pts1+pts2
-angles=ang.calculate_angles(pts)
+angles, coord=ang.calculate_angles(pts)
+# print(coord)
+# plt.plot([coord[i][1] for i in range(len(coord))],
+#          [coord[i][0] for i in  range(len(coord))])
+# plt.xlabel("x")
+# plt.ylabel("z")
+# # plt.xlim([-200, 10])
+# # plt.ylim([-200, 200])
+# plt.show(block=True)
 
+for a in angles:
+     print(a)
 Data=[]
 q=Queue()
 duration=5

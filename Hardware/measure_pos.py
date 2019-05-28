@@ -33,9 +33,13 @@ def read_pos(Q,duration=5,angles=[-1.18545]):
 	start_time=time.time()
 	cur_time=start_time
 	with MotionManager(motor_id, dt=dt, options=dxl_opts) as mm:
+		mm.torque_on([1])
+		mm.torque_on([2])
+		count=0
 		for pos in angles:
-			mm.set_goal_position([2], [np.pi - pos[0]])
-			mm.set_goal_position([1],pos[1])
+			mm.set_goal_position([2], [pos[0]+np.pi])
+			mm.set_goal_position([1],[pos[1]+np.pi])
+			mm.wait(.05)
 			line = []
 			cur_time = time.time()
 			cur_pos = mm.get_all_present_position()
@@ -44,6 +48,10 @@ def read_pos(Q,duration=5,angles=[-1.18545]):
 			line.append(cur_time)
 			line = line + cur_pos
 			Q.put(line)
+			if count==101:
+				mm.wait(5)
+				print("wait over")
+			count=count+1
 		mm.torque_off([1])
 		while cur_time-start_time<duration:
 			line=[]
