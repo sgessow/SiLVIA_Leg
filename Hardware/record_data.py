@@ -1,7 +1,9 @@
 import sys
 from multiprocessing import Process, Queue
-import read_serial_data
-import measure_pos
+import Hardware.measure_pos as measure_pos
+import Hardware.read_serial_data as read_serial_data
+import Util.interpolation as interp
+import Util.calculate_angles as ang
 import time
 import csv
 
@@ -10,11 +12,17 @@ csv_file_out='test_output.csv'
 if len(sys.argv)>=2:
     csv_file_out=sys.argv[1]
 
+
+pts1=interp.interpolate_Bspline(100, [0, -30], [0, 30], 60, True)
+pts2=interp.interpolate_line(100,[0, 30], [0, -30])
+pts=pts1+pts2
+angles=ang.calculate_angles(pts)
+
 Data=[]
 q=Queue()
 duration=5
 arduino = Process(target=read_serial_data.read_serial, args=([q,duration]))
-dyna = Process(target=measure_pos.read_pos, args=([q,duration]))
+dyna = Process(target=measure_pos.read_pos, args=([q,duration,angles]))
 arduino.start()
 dyna.start()
 start_time=time.time()

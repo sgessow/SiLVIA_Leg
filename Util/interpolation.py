@@ -8,15 +8,15 @@ def interpolate_Bspline(stepsBtwFrame, currentPos, nextPos, liftHeight, draw=Fal
     # next = [x, z]
     # curr = [x, z]
 
-    x_offset = 70.0  # Top control point height above liftheight
-    z_offset = 25.0  # End control point position outside leg stroke
+    x_offset = 15.0  # Top control point height above liftheight
+    z_offset = 5.0  # End control point position outside leg stroke
 
     # Pick up leg and make a full curve down to a upper position of wall
 
     halfZstroke = (nextPos[1] - currentPos[1]) / 2.0  # half stroke
     halfZstroke_and_offset = halfZstroke + z_offset  # half stroke plus offset outside the stroke
 
-    ctrlPoint = [[0.0,                                   -halfZstroke_and_offset/3.0],
+    ctrlPoint = [[0.0,                                   -halfZstroke_and_offset/1.2],
                  [liftHeight,                           -halfZstroke],
                  [liftHeight+x_offset,   0.0],
                  [liftHeight,                           2*halfZstroke]]  # there was one more point: [self.liftHeight/2, 0.0, halfZstroke_and_offset/3.0]
@@ -58,3 +58,22 @@ def interpolate_Bspline(stepsBtwFrame, currentPos, nextPos, liftHeight, draw=Fal
 
     return pts
 
+
+def interpolate_line(stepsBtwFrame, currentPos, nextPos):
+    pts=[]
+    if currentPos[0]==nextPos[0]:
+        delta_y=(nextPos[1]-currentPos[1])/stepsBtwFrame
+        for i in range(stepsBtwFrame):
+            coord=[currentPos[0],currentPos[1]+i*delta_y]
+            pts.append(coord)
+        pts.append(nextPos)
+    elif currentPos[1]==nextPos[1]:
+        delta_x = (nextPos[0] - currentPos[0]) / stepsBtwFrame
+        for i in range(stepsBtwFrame):
+            coord = [currentPos[0] + i * delta_x,currentPos[1]]
+            pts.append(coord)
+        pts.append(nextPos)
+    else:
+        print("Not implemented for diagonol lines yet!!")
+        return 1
+    return pts

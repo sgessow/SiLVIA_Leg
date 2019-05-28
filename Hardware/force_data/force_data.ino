@@ -1,22 +1,31 @@
-double fsrData;
-double Rfsr;
-double FORCE;
-double FORCE1;
-double fsrPin = A0;
+#include <HX711.h>
+#define DOUT 3
+#define CLK 2
+#define Vcc 5v
+HX711 scale;
+float calibration_factor =199750; //201400,193500,197600, 206600; -7050 worked for 440lb max scale setup
 void setup() {
   Serial.begin(9600);
-  // put your setup code here, to run once:
+  scale.begin(DOUT, CLK);
+  scale.set_scale();
+  scale.tare(); //Reset the scale to 0
 
+  long zero_factor = scale.read_average(); //Get a baseline reading
+  
+ 
 }
 
 void loop() {
-  fsrData = analogRead(fsrPin);
-  Rfsr = 10 * (5/(fsrData/1024*5)-1);
-  FORCE1=pow((2.332-(log10(Rfsr))*0.744),10);
-  FORCE = FORCE1/1000*9.8;
-  Serial.println("FORCE=");
-  Serial.println(FORCE);
-  //delay (500);
-  // put your main code here, to run repeatedly:
+  scale.set_scale(calibration_factor); //Adjust to this calibration factor
+  Serial.print(9.8* 0.453592 * scale.get_units() , 10);
+  Serial.println();
 
+ // if(Serial.available())
+  //{
+   // char temp = Serial.read();
+    //if(temp == '+' || temp == 'a')
+     // calibration_factor += 10;
+    //else if(temp == '-' || temp == 'z')
+     // calibration_factor -= 10;
+  //}
 }
