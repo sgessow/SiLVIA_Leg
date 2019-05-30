@@ -26,7 +26,7 @@ def calculate_angles(Input_Cords):
     angle_list=[]
     for coord in Input_Cords:
         X = (coord[0]) * (10 ^ -3)
-        Y = (coord[1]) * (10 ^ -3)
+        Y = (-coord[1]) * (10 ^ -3)
         H = sym.sqrt(math.power(X,2)+math.power(Y,2))
         alpha = sym.acos((math.power(t,2)-math.power(f,2)-math.power(H,2))/(2*f*H))
         beta = sym.atan(Y/X)
@@ -54,6 +54,7 @@ def make_trajectory(current_point, ending_point, state=2, lift_height=30, steps=
     if state == 0 or state==2:
         new_pts=interp.interpolate_Bspline(steps,current_point_l,ending_point_l,lift_height,False)
         pts_l=pts_l+new_pts
+    #pts_l.reverse()
     if state==1 or state==2:
         new_pts=interp.interpolate_line(steps,ending_point_l,current_point_l)
         pts_l=pts_l+new_pts
