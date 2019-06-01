@@ -31,6 +31,6 @@ with MotionManager(motor_id, dt=dt, options=dxl_opts) as mm:
     mm.torque_on([1])
     mm.torque_on([2])
     for pos in angles:
-        mm.set_goal_position([2], [pos[0] + np.pi])
-        mm.set_goal_position([1], [pos[1] + np.pi])
+        mm.set_goal_position([2], [pos[0]])
+        mm.set_goal_position([1], [pos[1]])
         mm.wait(0.01)

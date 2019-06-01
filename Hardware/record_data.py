@@ -1,70 +1,57 @@
 import sys
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Array, Value, Lock
 import Hardware.measure_pos as measure_pos
 import Hardware.read_serial_data as read_serial_data
-import Util.interpolation as interp
-import Util.make_trajectory as ang
+import Util.make_trajectory as trajectory
 import time
 import csv
-import matplotlib.pyplot as plt
 
+# Things to change
+current_point=[200,-70]
+end_point=[200,-30]
+csv_file_out='trial_1.csv'
+duration=5
 
-csv_file_out='test_output.csv'
+# Set up the csv file
 if len(sys.argv)>=2:
     csv_file_out=sys.argv[1]
 
-start=[0,-20]
-end=[0,80]
-pts1=interp.interpolate_Bspline(100, start, end, 20,False)
-pts2=interp.interpolate_line(100,end, start)
-pts=pts1+pts2
-angles, coord=ang.calculate_angles(pts)
-# print(coord)
-# plt.plot([coord[i][1] for i in range(len(coord))],
-#          [coord[i][0] for i in  range(len(coord))])
-# plt.xlabel("x")
-# plt.ylabel("z")
-# # plt.xlim([-200, 10])
-# # plt.ylim([-200, 200])
-# plt.show(block=True)
+# Make the path for the leg
+angles, point=trajectory.make_trajectory(current_point,end_point,2)
+trajectory.plot_trajectory(point)
 
-for a in angles:
-     print(a)
 Data=[]
-q=Queue()
-duration=5
-arduino = Process(target=read_serial_data.read_serial, args=([q,duration]))
-dyna = Process(target=measure_pos.read_pos, args=([q,duration,angles]))
+val_arduino=Array('d', 4)
+val_dyna=Array('d', 3)
+new_val=Value('i',1)
+lock=Lock()
+lock1=Lock()
+
+arduino = Process(target=read_serial_data.read_serial, args=([val_arduino,duration]))
+dyna = Process(target=measure_pos.read_pos, args=([val_dyna,new_val,angles,duration]))
 arduino.start()
 dyna.start()
+
+
 start_time=time.time()
 cur_time=start_time
-Last_A=[]
-Last_D=[]
-new_A=False
-new_D=False
 while(cur_time-start_time<duration):
     cur_time = time.time()
-    if not q.empty():
-        line=q.get()
-        if line[0]=='A':
-            Last_A=line
-            new_A=True
-        elif line[0]=='D':
-            Last_D=line
-            new_D=True
-    if new_D and new_A:
-        if abs(Last_D[1]-Last_A[1]>.1):
-            print("Sampling Error!")
-        else:
-            line_to_append=Last_D[1:2]+Last_A[2:]+Last_D[2:]
-            Data.append(line_to_append)
-            new_A=False
-            new_D=False
+    with lock:
+        if new_val.value:
+            new_val.value = False
+            line=[]
+            arduino_data= [val_arduino[i] for i in range(4)]
+            dyna_data=[val_dyna[i] for i in range(3)]
+            line=arduino_data+dyna_data
+            #print(line)
+            Data.append(line)
 
 
 arduino.join()
 dyna.join()
+print(Data)
+#Write to the CSV File
 with open(csv_file_out, 'w') as writeFile:
     writer = csv.writer(writeFile)
     writer.writerows(Data)

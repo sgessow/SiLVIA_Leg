@@ -2,6 +2,7 @@ import sympy as sym
 import mpmath as math
 import Util.interpolation as interp
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 # Takes in coords relative to the foot and converts them to relative the body
@@ -30,8 +31,8 @@ def calculate_angles(Input_Cords):
         H = sym.sqrt(math.power(X,2)+math.power(Y,2))
         alpha = sym.acos((math.power(t,2)-math.power(f,2)-math.power(H,2))/(2*f*H))
         beta = sym.atan(Y/X)
-        T_1 = alpha-beta
-        T_2 = sym.acos((math.power(H,2)-math.power(f,2)-math.power(t,2))/(2*f*t))
+        T_1 = alpha-beta+np.pi
+        T_2 = sym.acos((math.power(H,2)-math.power(f,2)-math.power(t,2))/(2*f*t))+np.pi
         angles=[T_1,T_2]
         angle_list.append(angles)
     return angle_list

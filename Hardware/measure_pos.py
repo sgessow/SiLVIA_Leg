@@ -2,6 +2,8 @@ from robot_player import MotionManager, DxlOptions
 import numpy as np
 import platform
 import time
+import ctypes
+from multiprocessing import Lock
 
 
 
@@ -11,7 +13,9 @@ IDs: 1,2
 USB port is /dev/ttyUSB0
 Motors are MX28
 """
-def read_pos(Q,duration=5,angles=[-1.18545]):
+def read_pos(shared_val,new_val,angles,duration=5):
+	lock=Lock()
+	lock1=Lock()
 	motor_id = [1,2]
 	dt = .005
 
@@ -29,38 +33,32 @@ def read_pos(Q,duration=5,angles=[-1.18545]):
 				protocol_version=2
 			   )
 
-	# todo add support for multiple angle positions
 	start_time=time.time()
 	cur_time=start_time
 	with MotionManager(motor_id, dt=dt, options=dxl_opts) as mm:
-		mm.torque_on([1])
-		mm.torque_on([2])
-		count=0
 		for pos in angles:
-			mm.set_goal_position([2], [pos[0]+np.pi])
-			mm.set_goal_position([1],[pos[1]+np.pi])
-			mm.wait(.05)
+			mm.set_goal_position([2], [pos[0]])
+			mm.set_goal_position([1],[pos[1]])
 			line = []
 			cur_time = time.time()
 			cur_pos = mm.get_all_present_position()
-			cur_pos[:] = [-x + 1 * np.pi for x in cur_pos]
-			line.append("D")
 			line.append(cur_time)
 			line = line + cur_pos
-			Q.put(line)
-			if count==101:
-				mm.wait(5)
-				print("wait over")
-			count=count+1
-		mm.torque_off([1])
+			with lock:
+				for i in range(3):
+					shared_val[i] = line[i]
+				new_val.value = True
+			mm.wait(.005)
+
 		while cur_time-start_time<duration:
 			line=[]
 			cur_time=time.time()
 			cur_pos=mm.get_all_present_position()
-			cur_pos[:] = [-x + 1*np.pi for x in cur_pos]
-			line.append("D")
 			line.append(cur_time)
 			line=line+cur_pos
-			Q.put(line)
-			# mm.wait(.1)
+			with lock:
+				for i in range(3):
+					shared_val[i] = line[i]
+				new_val.value=True
+			mm.wait(.005)
 	return True
