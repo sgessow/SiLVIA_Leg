@@ -45,8 +45,8 @@ def calculate_coordinates(input_angles):
     for angle in input_angles:
         T_1=angle[0]-np.pi
         T_2=angle[1]-np.pi
-        x=(f*math.cos(T_1)+t*math.cos((T_1-T_2)))*math.power(10,3)
-        y=(f*math.sin(T_1)+t*math.sin((T_1-T_2)))*math.power(10,3)
+        x=float((f*math.cos(T_1)+t*math.cos((T_1-T_2)))*math.power(10,3))
+        y=float((f*math.sin(T_1)+t*math.sin((T_1-T_2)))*math.power(10,3))
         coord_list.append([x,y])
     return coord_list
 

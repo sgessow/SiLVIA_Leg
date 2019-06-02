@@ -43,6 +43,9 @@ while(cur_time-start_time<duration):
             line=[]
             arduino_data= [val_arduino[i] for i in range(4)]
             dyna_data=[val_dyna[i] for i in range(3)]
+            angles=dyna_data[1:]
+            position=trajectory.calculate_coordinates([angles])
+            dyna_data=dyna_data+position
             line=arduino_data+dyna_data
             #print(line)
             Data.append(line)
