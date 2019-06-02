@@ -49,7 +49,23 @@ def read_pos(shared_val,new_val,angles,duration=5):
 					shared_val[i] = line[i]
 				new_val.value = True
 			mm.wait(.005)
-
+		cur_time = time.time()
+		print(cur_time-start_time)
+		while cur_time-start_time<duration-2:
+			line=[]
+			cur_time=time.time()
+			cur_pos=mm.get_all_present_position()
+			line.append(cur_time)
+			line=line+cur_pos
+			with lock:
+				for i in range(3):
+					shared_val[i] = line[i]
+				new_val.value=True
+			mm.wait(.005)
+		cur_time = time.time()
+		print(cur_time - start_time)
+		mm.torque_off([1])
+		mm.torque_off([2])
 		while cur_time-start_time<duration:
 			line=[]
 			cur_time=time.time()

@@ -1,4 +1,3 @@
-import sympy as sym
 import mpmath as math
 import Util.interpolation as interp
 import matplotlib.pyplot as plt
@@ -17,7 +16,7 @@ def shift_coordinates(Input_Cords, distance_to_wall, vertical_offset):
 
 def calculate_angles(Input_Cords):
     # Constants
-    scalling_const = sym.sqrt(.3)
+    scalling_const = np.sqrt(.3)
     f = 195 * scalling_const
     t = 375 * scalling_const
 
@@ -28,14 +27,28 @@ def calculate_angles(Input_Cords):
     for coord in Input_Cords:
         X = (coord[0]) * (10 ^ -3)
         Y = (-coord[1]) * (10 ^ -3)
-        H = sym.sqrt(math.power(X,2)+math.power(Y,2))
-        alpha = sym.acos((math.power(t,2)-math.power(f,2)-math.power(H,2))/(2*f*H))
-        beta = sym.atan(Y/X)
+        H = np.sqrt(math.power(X,2)+math.power(Y,2))
+        alpha = math.acos((math.power(t,2)-math.power(f,2)-math.power(H,2))/(2*f*H))
+        beta = math.atan(Y/X)
         T_1 = alpha-beta+np.pi
-        T_2 = sym.acos((math.power(H,2)-math.power(f,2)-math.power(t,2))/(2*f*t))+np.pi
+        T_2 = math.acos((math.power(H,2)-math.power(f,2)-math.power(t,2))/(2*f*t))+np.pi
         angles=[T_1,T_2]
         angle_list.append(angles)
     return angle_list
+
+def calculate_coordinates(input_angles):
+    # Constants
+    scalling_const = np.sqrt(.3)
+    f = 195 * scalling_const * math.power(10,-3)
+    t = 375 * scalling_const * math.power(10,-3)
+    coord_list=[]
+    for angle in input_angles:
+        T_1=angle[0]-np.pi
+        T_2=angle[1]-np.pi
+        x=(f*math.cos(T_1)+t*math.cos((T_1-T_2)))*math.power(10,3)
+        y=(f*math.sin(T_1)+t*math.sin((T_1-T_2)))*math.power(10,3)
+        coord_list.append([x,y])
+    return coord_list
 
 def make_trajectory(current_point, ending_point, state=2, lift_height=30, steps=100):
     # State 0 is only the pull away and place on wall
