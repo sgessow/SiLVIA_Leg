@@ -21,7 +21,7 @@ angles, point=trajectory.make_trajectory(current_point,end_point,2,30)
 #trajectory.plot_trajectory(point)
 
 Data=[]
-val_arduino=Array('d', 4)
+val_arduino=Array('d', 6)
 val_dyna=Array('d', 3)
 new_val=Value('i',1)
 lock=Lock()
@@ -41,11 +41,11 @@ while(cur_time-start_time<duration):
         if new_val.value:
             new_val.value = False
             line=[]
-            arduino_data= [val_arduino[i] for i in range(4)]
+            arduino_data= [val_arduino[i] for i in range(6)]
             dyna_data=[val_dyna[i] for i in range(3)]
             angles=dyna_data[1:]
             position=trajectory.calculate_coordinates([angles])
-            dyna_data=dyna_data+position
+            dyna_data=dyna_data+position[0]
             line=arduino_data+dyna_data
             #print(line)
             Data.append(line)

@@ -10,56 +10,68 @@ Adafruit_INA219 ina219_B(0x41);
 #define CLK 2
 #define Vcc 5v
 HX711 scale;
+
+// Loop Timing
+//int start_time=millis();
+//int end_time=start_time;
+
+int count=0;
 float calibration_factor =199750; //201400,193500,197600, 206600; -7050 worked for 440lb max scale setup
+float force=0;
+float shuntvoltage_A = 0;
+float busvoltage_A = 0;
+float current_mA_A = 0;
+float loadvoltage_A = 0;
+float shuntvoltage_B = 0;
+float busvoltage_B = 0;
+float current_mA_B = 0;
+float loadvoltage_B = 0;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   scale.begin(DOUT, CLK);
-  scale.set_scale();
-  scale.tare(); //Reset the scale to 0
-  long zero_factor = scale.read_average(); //Get a baseline reading
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
+  scale.tare();
   uint32_t currentFrequency;
   ina219_A.begin();
   ina219_B.begin();
-
+  force=(9.8* 0.453592 )*((scale.read()-scale.get_offset())/scale.get_scale());
+  // Loop Timing
+  //start_time=millis();
 }
-//int start_time=millis();
-//int end_time=start_time;
-//int count=0;
+
+
 void loop() {
-//  if (count==100){
-//    end_time=millis();
-//    Serial.println("HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEEEEEEEEEE");
-//    Serial.println(end_time-start_time);
-//  }
-//  count++;
-  // Scale Stuff
-  // put your main code here, to run repeatedly:
-  //float shuntvoltage_A = 0;
-  //float busvoltage_A = 0;
-  float current_mA_A = 0;
-  //float loadvoltage_A = 0;
-  //float shuntvoltage_B = 0;
-  //float busvoltage_B = 0;
-  float current_mA_B = 0;
-  //float loadvoltage_B = 0;
-  //shuntvoltage_A = ina219_A.getShuntVoltage_mV(); 
-  //busvoltage_A = ina219_A.getBusVoltage_V();
+  // Loop Timing
+  //if (count==100){
+    //end_time=millis();
+    //Serial.println("HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEEEEEEEEEE");
+    //Serial.println(end_time-start_time);
+    //}
+
+  shuntvoltage_A = ina219_A.getShuntVoltage_mV(); 
+  busvoltage_A = ina219_A.getBusVoltage_V();
   current_mA_A = -1*ina219_A.getCurrent_mA();
-  //loadvoltage_A = busvoltage_A + (shuntvoltage_A / 1000);
-  //shuntvoltage_B = ina219_B.getShuntVoltage_mV(); 
-  //busvoltage_B = ina219_B.getBusVoltage_V();
+  loadvoltage_A = busvoltage_A + (shuntvoltage_A / 1000);
+  shuntvoltage_B = ina219_B.getShuntVoltage_mV(); 
+  busvoltage_B = ina219_B.getBusVoltage_V();
   current_mA_B = 1*ina219_B.getCurrent_mA();
-  //loadvoltage_B = busvoltage_B + (shuntvoltage_B / 1000);
-  float force=9.8* 0.453592 * scale.get_units();
+  loadvoltage_B = busvoltage_B + (shuntvoltage_B / 1000);
+  if (count % 20==0){
+    force=(9.8* 0.453592 )*((scale.read()-scale.get_offset())/scale.get_scale());
+    count=0;
+  }
   Serial.print(current_mA_A);
   Serial.print(" ");
   Serial.print(current_mA_B);
   Serial.print(" ");
+  Serial.print(loadvoltage_A);
+  Serial.print(" ");
+  Serial.print(loadvoltage_B);
+  Serial.print(" ");
   Serial.print(force);
   Serial.println();
-  
-  //delay(.0001);
+
+  count++;
 }

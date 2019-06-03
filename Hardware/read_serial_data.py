@@ -17,9 +17,9 @@ def read_serial(shared_val,duration=5, port='/dev/ttyACM0', baudrate=115200):
             try:
                 line_read = [float(x) for x in line.split(' ')]
                 line_out=line_out+line_read
-                if len(line_out)==4:
+                if len(line_out)==6:
                     with lock:
-                        for i in range(4):
+                        for i in range(6):
                             shared_val[i] = line_out[i]
             except ValueError:
                 pass
