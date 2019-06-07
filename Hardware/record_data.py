@@ -9,7 +9,7 @@ import csv
 # Things to change
 current_point=[200,-70]
 end_point=[200,-30]
-csv_file_out='Data/923_Spring_2_1.csv'
+csv_file_out='Data/1006_No_Spring_3.csv'
 duration=6
 turn_on_time=2
 
@@ -18,7 +18,7 @@ if len(sys.argv)>=2:
     csv_file_out=sys.argv[1]
 
 # Make the path for the leg
-angles, point=trajectory.make_trajectory(current_point,end_point,2,30)
+angles, point=trajectory.make_trajectory(current_point,end_point,2,27)
 #trajectory.plot_trajectory(point)
 
 Data=[]
@@ -55,7 +55,7 @@ while(cur_time-start_time<duration):
 
 arduino.join()
 dyna.join()
-
+Data=Data[0:]
 #Write to the CSV File
 with open(csv_file_out, 'w') as writeFile:
     writer = csv.writer(writeFile)

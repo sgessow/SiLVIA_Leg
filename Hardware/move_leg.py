@@ -28,9 +28,14 @@ dxl_opts = DxlOptions([motor_id],
                       )
 
 with MotionManager(motor_id, dt=dt, options=dxl_opts) as mm:
-    mm.torque_on([1])
-    mm.torque_on([2])
-    for pos in angles:
-        mm.set_goal_position([2], [pos[0]])
-        mm.set_goal_position([1], [pos[1]])
-        mm.wait(0.01)
+    di = mm.device
+    print("HEREEARTSTARYTDJFUHKLHkjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
+    print(di._read_data([1], 44, 4))
+    #di._write_data([1],84,[1500],4)
+    #print(di._read_data([1], 84, 4))
+    # mm.torque_on([1])
+    # mm.torque_on([2])
+    # for pos in angles:
+    #     mm.set_goal_position([2], [pos[0]])
+    #     mm.set_goal_position([1], [pos[1]])
+    #     mm.wait(0.01)

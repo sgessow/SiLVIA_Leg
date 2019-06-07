@@ -8,7 +8,7 @@ def interpolate_Bspline(stepsBtwFrame, currentPos, nextPos, liftHeight, draw=Fal
     # next = [x, z]
     # curr = [x, z]
 
-    x_offset = 30  # Top control point height above liftheight
+    x_offset = 5  # Top control point height above liftheight
     z_offset = 30  # End control point position outside leg stroke
 
     # Pick up leg and make a full curve down to a upper position of wall
@@ -16,7 +16,7 @@ def interpolate_Bspline(stepsBtwFrame, currentPos, nextPos, liftHeight, draw=Fal
     halfZstroke = (nextPos[1] - currentPos[1]) / 2.0  # half stroke
     halfZstroke_and_offset = halfZstroke + z_offset  # half stroke plus offset outside the stroke
 
-    ctrlPoint = [[0.0,                                   -halfZstroke_and_offset/1],
+    ctrlPoint = [[0.0,                                   -halfZstroke_and_offset/2.5],
                  [liftHeight,                           -halfZstroke],
                  [liftHeight+x_offset,   0.0],
                  [liftHeight,                           2*halfZstroke]]  # there was one more point: [self.liftHeight/2, 0.0, halfZstroke_and_offset/3.0]

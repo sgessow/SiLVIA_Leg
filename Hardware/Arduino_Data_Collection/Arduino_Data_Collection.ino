@@ -45,10 +45,10 @@ void setup() {
 void loop() {
   // Loop Timing
   //if (count==100){
-    //end_time=millis();
-    //Serial.println("HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEEEEEEEEEE");
-    //Serial.println(end_time-start_time);
-    //}
+   // end_time=millis();
+  //  Serial.println("HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEEEEEEEEEE");
+  //  Serial.println(end_time-start_time);
+  //  }
 
   shuntvoltage_A = ina219_A.getShuntVoltage_mV(); 
   busvoltage_A = ina219_A.getBusVoltage_V();
@@ -58,7 +58,7 @@ void loop() {
   busvoltage_B = ina219_B.getBusVoltage_V();
   current_mA_B = 1*ina219_B.getCurrent_mA();
   loadvoltage_B = busvoltage_B + (shuntvoltage_B / 1000);
-  if (count % 20==0){
+  if (count % 5==0){
     force=(9.8* 0.453592 )*((scale.read()-scale.get_offset())/scale.get_scale());
     count=0;
   }

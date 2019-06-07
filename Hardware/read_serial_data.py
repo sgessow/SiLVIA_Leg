@@ -5,10 +5,11 @@ import ctypes
 
 def read_serial(shared_val,duration=5, port='/dev/ttyACM0', baudrate=115200):
     lock=Lock()
-    with serial.Serial(port, baudrate, timeout=1) as ser:
+    start_time = time.time()
+    cur_time = start_time
+    with serial.Serial(port, baudrate, timeout=None) as ser:
         # read up to ten bytes (timeout)
-        start_time=time.time()
-        cur_time=start_time
+        ser.setDTR(True)
         while cur_time-start_time<duration:
             line_out=[]
             cur_time=time.time()

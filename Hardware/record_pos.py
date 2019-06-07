@@ -59,6 +59,9 @@ def read_pos(shared_val,new_val,angles,duration=5):
 	cur_time=start_time
 	with MotionManager(motor_id, dt=dt, options=dxl_opts) as mm:
 		mm.wait(.1)
+		di = mm.device
+		di._write_data(motor_id, 84, [1500]*len(motor_id), 2)
+		di._write_data(motor_id, 82, [200]*len(motor_id), 2)
 		for pos in angles:
 			mm.set_goal_position([2], [pos[0]])
 			mm.set_goal_position([1],[pos[1]])
@@ -73,7 +76,7 @@ def read_pos(shared_val,new_val,angles,duration=5):
 				shared_val[3]=pos[0]
 				shared_val[4]=pos[1]
 				new_val.value = True
-			mm.wait(.005)
+			mm.wait(dt)
 		cur_time = time.time()
 		print(cur_time-start_time)
 		while cur_time-start_time<duration-2:
@@ -86,7 +89,7 @@ def read_pos(shared_val,new_val,angles,duration=5):
 				for i in range(3):
 					shared_val[i] = line[i]
 				new_val.value=True
-			mm.wait(.005)
+			mm.wait(dt)
 		cur_time = time.time()
 		print(cur_time - start_time)
 		mm.torque_off([1])
