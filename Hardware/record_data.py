@@ -7,9 +7,10 @@ import time
 import csv
 
 # Things to change
-current_point=[200,-70]
-end_point=[200,-30]
-csv_file_out='Data/1006_No_Spring_3.csv'
+overlap=7
+current_point=[250+overlap,-70]
+end_point=[250+overlap,-40]
+csv_file_out='Data/S_'+str(overlap)+'_954_3.csv'
 duration=6
 turn_on_time=2
 
@@ -18,8 +19,8 @@ if len(sys.argv)>=2:
     csv_file_out=sys.argv[1]
 
 # Make the path for the leg
-angles, point=trajectory.make_trajectory(current_point,end_point,2,27)
-#trajectory.plot_trajectory(point)
+angles, point=trajectory.make_trajectory(current_point,end_point,2,30+overlap)
+trajectory.plot_trajectory(point)
 
 Data=[]
 val_arduino=Array('d', 6)
