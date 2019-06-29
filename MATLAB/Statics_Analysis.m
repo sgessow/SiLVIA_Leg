@@ -13,7 +13,7 @@ SAFTEY_FACTOR=1.25;
 % The distance from the center of the robot to the wall
 d=200; %mm
 % The distance the body is from the point of contact
-h=30;
+h=-30;
 
 %% Position Calculations
 d=d*10^-3;
@@ -22,8 +22,8 @@ t=t*10^-3;
 h=h*10^-3;
 
 syms t_1 t_2
-x(t_1, t_2)=f*cos(t_1)-t*cos(t_2)-d;
-y(t_1,t_2)=-f*sin(t_1)-t*sin(t_2)+h;
+x(t_1, t_2)=f*cos(t_1)+t*cos(t_2)-d;
+y(t_1,t_2)=f*sin(t_1)-t*sin(t_2)-h;
 [T_1, T_2]=solve([x,y]);
 T_1=vpa(T_1(1));
 T_2=vpa(T_2(2));
